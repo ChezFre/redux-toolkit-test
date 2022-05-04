@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
+import React, { useState } from "react";
 
-import { useAppSelector, useAppDispatch } from '../../app/hooks';
+import { useAppSelector, useAppDispatch } from "../../app/hooks";
 import {
   decrement,
   increment,
@@ -8,18 +8,34 @@ import {
   incrementAsync,
   incrementIfOdd,
   selectCount,
-} from './counterSlice';
-import styles from './Counter.module.css';
+} from "./counterSlice";
+import {
+  fetchPokemonAsync,
+  selectPokemon,
+  selectPokemonStatus,
+} from "../pokemon/pokemonSlice";
+import styles from "./Counter.module.css";
 
 export function Counter() {
   const count = useAppSelector(selectCount);
+  const pokemon = useAppSelector(selectPokemon);
+  const pokemonStatus = useAppSelector(selectPokemonStatus);
+
   const dispatch = useAppDispatch();
-  const [incrementAmount, setIncrementAmount] = useState('2');
+  const [incrementAmount, setIncrementAmount] = useState("2");
 
   const incrementValue = Number(incrementAmount) || 0;
 
   return (
     <div>
+      <ul>
+        {pokemon.map(({ order, name, image }) => (
+          <li key={order}>
+            <img src={image} alt="" />
+            {name}
+          </li>
+        ))}
+      </ul>
       <div className={styles.row}>
         <button
           className={styles.button}
@@ -61,6 +77,12 @@ export function Counter() {
           onClick={() => dispatch(incrementIfOdd(incrementValue))}
         >
           Add If Odd
+        </button>
+        <button
+          className={styles.button}
+          onClick={() => dispatch(fetchPokemonAsync(count))}
+        >
+          Fetch pokemon ({pokemonStatus})
         </button>
       </div>
     </div>
